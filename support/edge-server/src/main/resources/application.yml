@@ -12,8 +12,8 @@ endpoints:
 zuul:
   ignoredServices: "*"
   routes:
-    productcomposite:
-      path: /productcomposite/**
+#    productcomposite:
+#      path: /productcomposite/**
     product:
       path: /product/**
 
