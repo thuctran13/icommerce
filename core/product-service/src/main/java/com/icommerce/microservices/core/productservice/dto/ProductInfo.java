@@ -3,10 +3,13 @@ package com.icommerce.microservices.core.productservice.dto;
 import com.icommerce.microservices.core.productservice.entity.ProductStateEnum;
 import com.icommerce.microservices.core.productservice.entity.ProductStatusEnum;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class ProductInfo {
+public class ProductInfo implements Serializable {
+    private static final long serialVersionUID = -3595275954796713966L;
+    
     private Long id;
     
     private String name;
