@@ -2,7 +2,7 @@ package com.icommerce.microservices.core.reviewservice.service;
 
 import com.icommerce.microservices.core.reviewservice.dao.ReviewDAO;
 import com.icommerce.microservices.core.reviewservice.dto.ReviewInfo;
-import com.icommerce.microservices.core.reviewservice.dto.ReviewResponse;
+import com.icommerce.microservices.core.reviewservice.dto.ReviewInfoList;
 import com.icommerce.microservices.core.reviewservice.entity.Review;
 import com.icommerce.microservices.core.reviewservice.util.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +32,8 @@ public class ReviewService {
     private RestUtil restUtil;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ReviewResponse findAll() {
-        ReviewResponse productResponse = new ReviewResponse();
+    public ReviewInfoList findAll() {
+        ReviewInfoList productResponse = new ReviewInfoList();
         reviewDAO.findAll().forEach(review -> productResponse.getReviewInfoList().add(new ReviewInfo(
                 review.getId(),
                 review.getTitle(),
@@ -112,8 +112,8 @@ public class ReviewService {
     }
 
     @RequestMapping(value = "/byProductId/{productId}", method = RequestMethod.GET)
-    public ReviewResponse findAllByProductId(@PathVariable Long productId) {
-        ReviewResponse reviewResponse = new ReviewResponse();
+    public ReviewInfoList findAllByProductId(@PathVariable Long productId) {
+        ReviewInfoList reviewResponse = new ReviewInfoList();
         reviewDAO.findAllByProductId(productId)
                 .forEach(review -> reviewResponse.getReviewInfoList().add(
                         new ReviewInfo(

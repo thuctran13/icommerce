@@ -3,7 +3,7 @@ package com.icommerce.microservices.core.productservice.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductResponse {
+public class ProductInfoList {
     private List<ProductInfo> productInfoList = new ArrayList<>();
 
     public List<ProductInfo> getProductInfoList() {

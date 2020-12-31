@@ -3,7 +3,7 @@ package com.icommerce.microservices.core.reviewservice.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReviewResponse {
+public class ReviewInfoList {
     private List<ReviewInfo> reviewInfoList = new ArrayList<>();
 
     public List<ReviewInfo> getReviewInfoList() {
