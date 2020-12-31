@@ -12,10 +12,10 @@ endpoints:
 zuul:
   ignoredServices: "*"
   routes:
-    productcomposite:
-      path: /productcomposite/**
     product:
       path: /product/**
+#    productcomposite:
+#      path: /productcomposite/**
 
 server:
   port: 8765
