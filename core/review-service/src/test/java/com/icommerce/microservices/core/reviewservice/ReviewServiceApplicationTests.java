@@ -54,6 +54,24 @@ class ReviewServiceApplicationTests {
     }
 
     @Test
+    public void testFindAllByProduct() {
+        Long productId = 3L;
+        create("Good product", "This product is best product ever, bla bla", productId);
+        create("Product OK", "This product is best product ever, bla bla", productId);
+        create("So so", "This product is best product ever, bla bla", productId);
+
+        entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<ReviewResponse> findAllByProductRes = restTemplate.exchange(
+                createUrlWithPort("review/byProductId/" + productId),
+                HttpMethod.GET,
+                entity,
+                ReviewResponse.class);
+
+        assertNotNull(findAllByProductRes.getBody());
+        assertEquals(3, findAllByProductRes.getBody().getReviewInfoList().size());
+    }
+
+    @Test
     public void testFindById() {
         ReviewInfo reviewInfo = create("Good product", "This product is best product ever, bla bla", 1L);
 

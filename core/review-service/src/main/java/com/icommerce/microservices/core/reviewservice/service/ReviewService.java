@@ -111,6 +111,23 @@ public class ReviewService {
         reviewDAO.delete(review);
     }
 
+    @RequestMapping(value = "/byProductId/{productId}", method = RequestMethod.GET)
+    public ReviewResponse findAllByProductId(@PathVariable Long productId) {
+        ReviewResponse reviewResponse = new ReviewResponse();
+        reviewDAO.findAllByProductId(productId)
+                .forEach(review -> reviewResponse.getReviewInfoList().add(
+                        new ReviewInfo(
+                                review.getId(),
+                                review.getTitle(),
+                                review.getDescription(),
+                                review.getProductId(),
+                                review.getCreationTs(),
+                                review.getModifyTs()
+                        )));
+
+        return reviewResponse;
+    }
+
     private Review findReviewById(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("Product id must not be null");
