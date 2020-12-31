@@ -25,12 +25,10 @@ public class Product {
     private String description;
 
     @Column(name = "STATE", length = 20, nullable = false)
-    @Enumerated(EnumType.STRING)
-    private ProductStateEnum state;
+    private String state;
 
     @Column(name = "STATUS", length = 20, nullable = false)
-    @Enumerated(EnumType.STRING)
-    private ProductStatusEnum status;
+    private String status;
     
     @Column(name = "PRICE")
     private BigDecimal price;
@@ -73,19 +71,19 @@ public class Product {
         this.description = description;
     }
 
-    public ProductStateEnum getState() {
+    public String getState() {
         return state;
     }
 
-    public void setState(ProductStateEnum state) {
+    public void setState(String state) {
         this.state = state;
     }
 
-    public ProductStatusEnum getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(ProductStatusEnum status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

@@ -1,8 +1,5 @@
 package com.icommerce.microservices.core.productservice.dto;
 
-import com.icommerce.microservices.core.productservice.entity.ProductStateEnum;
-import com.icommerce.microservices.core.productservice.entity.ProductStatusEnum;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -16,9 +13,9 @@ public class ProductInfo implements Serializable {
 
     private String description;
 
-    private ProductStateEnum state;
+    private String state;
 
-    private ProductStatusEnum status;
+    private String status;
 
     private BigDecimal price;
 
@@ -31,7 +28,7 @@ public class ProductInfo implements Serializable {
     public ProductInfo(){
     }
 
-    public ProductInfo(Long id, String name, String description, ProductStateEnum state, ProductStatusEnum status, BigDecimal price, Double weight, Date creationTs, Date modifyTs) {
+    public ProductInfo(Long id, String name, String description, String state, String status, BigDecimal price, Double weight, Date creationTs, Date modifyTs) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -67,19 +64,19 @@ public class ProductInfo implements Serializable {
         this.description = description;
     }
 
-    public ProductStateEnum getState() {
+    public String getState() {
         return state;
     }
 
-    public void setState(ProductStateEnum state) {
+    public void setState(String state) {
         this.state = state;
     }
 
-    public ProductStatusEnum getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(ProductStatusEnum status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
