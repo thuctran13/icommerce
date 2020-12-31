@@ -2,10 +2,8 @@ package com.icommerce.microservices.core.productservice;
 
 import com.icommerce.microservices.core.productservice.dto.ProductInfo;
 import com.icommerce.microservices.core.productservice.dto.ProductResponse;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -14,16 +12,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.event.annotation.BeforeTestClass;
-import org.springframework.test.web.reactive.server.WebTestClient;
 
-import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -35,11 +27,37 @@ class ProductServiceApplicationTests {
 	
 	private TestRestTemplate restTemplate = new TestRestTemplate();
 	private static HttpHeaders httpHeaders = new HttpHeaders();
+	private HttpEntity entity = null;
 	
 	@BeforeAll
 	public static void before() {
 		httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 		httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+	}
+	
+	@Test
+	public void testFindAllProducts() {
+		
+	}
+
+	@Test
+	public void testFindById() {
+
+	}
+
+	@Test
+	public void testCreateProduct() {
+		
+	}
+
+	@Test
+	public void testUpdateProduct_OK() {
+		
+	}
+
+	@Test
+	public void testUpdateProduct_NOK() {
+
 	}
 
 	@Test
@@ -94,6 +112,30 @@ class ProductServiceApplicationTests {
 		
 		assertTrue(findAllRes.getBody() != null && findAllRes.getBody().getProductInfoList() != null);
 		assertTrue(findAllRes.getBody().getProductInfoList().isEmpty());
+	}
+
+	private ResponseEntity<ProductInfo> create(String title, String description, Long product_id) {
+		ProductInfo productCreationRes = new ProductInfo();
+		productCreationRes.setName("iPhone12");
+		productCreationRes.setDescription("Latest Apple Product");
+		productCreationRes.setPrice(BigDecimal.valueOf(1000));
+		productCreationRes.setWeight(400d);
+
+		entity = new HttpEntity<>(productCreationRes, httpHeaders);
+		return restTemplate.exchange(
+				createUrlWithPort("product/"),
+				HttpMethod.POST,
+				entity,
+				ProductInfo.class);
+	}
+
+	private ResponseEntity<ProductInfo> findById(Long id) {
+		entity = new HttpEntity<>(null, httpHeaders);
+		return restTemplate.exchange(
+				createUrlWithPort("product/" + id),
+				HttpMethod.GET,
+				entity,
+				ProductInfo.class);
 	}
 
 	private String createUrlWithPort(String uri) {
