@@ -15,7 +15,7 @@ import java.util.Date;
 public class Product {
     @Id
     @GeneratedValue
-    @Column(name = "Id", nullable = false)
+    @Column(name = "ID", nullable = false)
     private Long id;
     
     @Column(name = "NAME", length = 128, nullable = false)
