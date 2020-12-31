@@ -21,13 +21,13 @@ public class Product {
     @Column(name = "NAME", length = 128, nullable = false)
     private String name;
 
-    @Column(name = "DESCRIPTION", length = 2000, nullable = false)
+    @Column(name = "DESCRIPTION", length = 2000)
     private String description;
 
-    @Column(name = "STATE", length = 20, nullable = false)
+    @Column(name = "STATE", length = 20)
     private String state;
 
-    @Column(name = "STATUS", length = 20, nullable = false)
+    @Column(name = "STATUS", length = 20)
     private String status;
     
     @Column(name = "PRICE")

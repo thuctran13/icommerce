@@ -23,10 +23,10 @@ import java.util.Date;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class ProductService {
-    
+
     @Autowired
     private ProductDAO productDAO;
-    
+
     @Autowired
     private RestUtil restUtil;
 
@@ -46,7 +46,7 @@ public class ProductService {
 
         return productResponse;
     }
-    
+
     @RequestMapping(value = "/product/{productId}", method = RequestMethod.GET)
     public ProductInfo find(@PathVariable Long productId) {
         Product product = findProductById(productId);
@@ -96,23 +96,31 @@ public class ProductService {
     @RequestMapping(value = "/product/{productId}", method = RequestMethod.PUT)
     public ProductInfo update(@PathVariable Long productId, @RequestBody() ProductInfo productInfo) {
         Product product = findProductById(productId);
-        
+
         //update field from request
-        product.setName(productInfo.getName());
-        product.setDescription(productInfo.getDescription());
+        if (productInfo.getName() != null) {
+            product.setName(productInfo.getName());
+        }
+        if (productInfo.getDescription() != null) {
+            product.setDescription(productInfo.getDescription());
+        }
         if (productInfo.getState() != null) {
             product.setState(productInfo.getState());
         }
         if (productInfo.getStatus() != null) {
             product.setStatus(productInfo.getStatus());
         }
-        product.setPrice(productInfo.getPrice());
-        product.setWeight(productInfo.getWeight());
+        if (productInfo.getPrice() != null) {
+            product.setPrice(productInfo.getPrice());
+        }
+        if (productInfo.getWeight() != null) {
+            product.setWeight(productInfo.getWeight());
+        }
         product.setModifyTs(new Date());
         product.setModifyUid("admin");
         product.setCtn(product.getCtn() + 1);
         product = productDAO.save(product);
-        
+
         return new ProductInfo(
                 product.getId(),
                 product.getName(),
@@ -129,20 +137,20 @@ public class ProductService {
     @RequestMapping(value = "/product/{productId}", method = RequestMethod.DELETE)
     public void delete(@PathVariable Long productId) {
         Product product = findProductById(productId);
-        
+
         productDAO.delete(product);
     }
-    
+
     private Product findProductById(Long id) {
         if (id == null) {
             throw new IllegalArgumentException("Product id must not be null");
         }
-        
+
         Product product = productDAO.findById(id).orElse(null);
         if (product == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found");            
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found");
         }
-        
+
         return product;
     }
 }
