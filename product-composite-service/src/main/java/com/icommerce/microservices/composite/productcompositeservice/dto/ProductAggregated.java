@@ -4,39 +4,22 @@ package com.icommerce.microservices.composite.productcompositeservice.dto;
  * Created by magnus on 04/03/15.
  */
 public class ProductAggregated {
-    private int productId;
-    private String name;
-    private int weight;
-    
-    public ProductAggregated(){}
+    private ProductInfo productInfo;
+    private ReviewInfoList reviewResponse;
 
-    public ProductAggregated(int productId, String name, int weight) {
-        this.productId = productId;
-        this.name = name;
-        this.weight = weight;
+    public ProductInfo getProductInfo() {
+        return productInfo;
     }
 
-    public int getProductId() {
-        return productId;
+    public void setProductInfo(ProductInfo productInfo) {
+        this.productInfo = productInfo;
     }
 
-    public void setProductId(int productId) {
-        this.productId = productId;
+    public ReviewInfoList getReviewResponse() {
+        return reviewResponse;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getWeight() {
-        return weight;
-    }
-
-    public void setWeight(int weight) {
-        this.weight = weight;
+    public void setReviewResponse(ReviewInfoList reviewResponse) {
+        this.reviewResponse = reviewResponse;
     }
 }

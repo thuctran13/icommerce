@@ -1,7 +1,7 @@
 package com.icommerce.microservices.core.reviewservice;
 
 import com.icommerce.microservices.core.reviewservice.dto.ReviewInfo;
-import com.icommerce.microservices.core.reviewservice.dto.ReviewResponse;
+import com.icommerce.microservices.core.reviewservice.dto.ReviewInfoList;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,11 +43,11 @@ class ReviewServiceApplicationTests {
         create("Product OK", "This product is best product ever, bla bla", 1L);
 
         entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<ReviewResponse> findAllRes = restTemplate.exchange(
+        ResponseEntity<ReviewInfoList> findAllRes = restTemplate.exchange(
                 createUrlWithPort("review/"),
                 HttpMethod.GET,
                 entity,
-                ReviewResponse.class);
+                ReviewInfoList.class);
 
         assertNotNull(findAllRes.getBody());
         assertFalse(findAllRes.getBody().getReviewInfoList().isEmpty());
@@ -61,11 +61,11 @@ class ReviewServiceApplicationTests {
         create("So so", "This product is best product ever, bla bla", productId);
 
         entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<ReviewResponse> findAllByProductRes = restTemplate.exchange(
+        ResponseEntity<ReviewInfoList> findAllByProductRes = restTemplate.exchange(
                 createUrlWithPort("review/byProductId/" + productId),
                 HttpMethod.GET,
                 entity,
-                ReviewResponse.class);
+                ReviewInfoList.class);
 
         assertNotNull(findAllByProductRes.getBody());
         assertEquals(3, findAllByProductRes.getBody().getReviewInfoList().size());

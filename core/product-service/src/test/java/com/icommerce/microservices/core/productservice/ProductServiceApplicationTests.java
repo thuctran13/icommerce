@@ -1,7 +1,7 @@
 package com.icommerce.microservices.core.productservice;
 
 import com.icommerce.microservices.core.productservice.dto.ProductInfo;
-import com.icommerce.microservices.core.productservice.dto.ProductResponse;
+import com.icommerce.microservices.core.productservice.dto.ProductInfoList;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,7 +13,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -46,11 +45,11 @@ class ProductServiceApplicationTests {
         create("iPhone12", "Latest Apple Product");
 
         entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<ProductResponse> findAllByProductRes = restTemplate.exchange(
+        ResponseEntity<ProductInfoList> findAllByProductRes = restTemplate.exchange(
                 createUrlWithPort("product/"),
                 HttpMethod.GET,
                 entity,
-                ProductResponse.class);
+                ProductInfoList.class);
 
         assertEquals(HttpStatus.OK, findAllByProductRes.getStatusCode());
         assertNotNull(findAllByProductRes.getBody());
@@ -198,11 +197,11 @@ class ProductServiceApplicationTests {
 
         // find all product
         entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<ProductResponse> findAllRes = restTemplate.exchange(
+        ResponseEntity<ProductInfoList> findAllRes = restTemplate.exchange(
                 createUrlWithPort("product/"),
                 HttpMethod.GET,
                 entity,
-                ProductResponse.class);
+                ProductInfoList.class);
 
         assertTrue(findAllRes.getBody() != null && findAllRes.getBody().getProductInfoList() != null);
         assertTrue(findAllRes.getBody().getProductInfoList().isEmpty());

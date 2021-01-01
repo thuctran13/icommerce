@@ -2,7 +2,7 @@ package com.icommerce.microservices.core.productservice.service;
 
 import com.icommerce.microservices.core.productservice.dao.ProductDAO;
 import com.icommerce.microservices.core.productservice.dto.ProductInfo;
-import com.icommerce.microservices.core.productservice.dto.ProductResponse;
+import com.icommerce.microservices.core.productservice.dto.ProductInfoList;
 import com.icommerce.microservices.core.productservice.entity.Product;
 import com.icommerce.microservices.core.productservice.util.RestUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +22,7 @@ import java.util.Date;
 @RestController
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@RequestMapping(value = "/product/")
 public class ProductService {
 
     @Autowired
@@ -30,9 +31,9 @@ public class ProductService {
     @Autowired
     private RestUtil restUtil;
 
-    @RequestMapping(value = "/product/", method = RequestMethod.GET)
-    public ProductResponse findAll() {
-        ProductResponse productResponse = new ProductResponse();
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public ProductInfoList findAll() {
+        ProductInfoList productResponse = new ProductInfoList();
         productDAO.findAll().forEach(product -> productResponse.getProductInfoList().add(new ProductInfo(
                 product.getId(),
                 product.getName(),
@@ -47,7 +48,7 @@ public class ProductService {
         return productResponse;
     }
 
-    @RequestMapping(value = "/product/{productId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{productId}", method = RequestMethod.GET)
     public ProductInfo find(@PathVariable Long productId) {
         Product product = findProductById(productId);
 
@@ -64,7 +65,7 @@ public class ProductService {
         );
     }
 
-    @RequestMapping(value = "/product", method = RequestMethod.POST)
+    @RequestMapping(value = "/", method = RequestMethod.POST)
     public ProductInfo create(@RequestBody() ProductInfo productInfo) {
         Product product = new Product();
         product.setName(productInfo.getName());
@@ -93,7 +94,7 @@ public class ProductService {
         );
     }
 
-    @RequestMapping(value = "/product/{productId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{productId}", method = RequestMethod.PUT)
     public ProductInfo update(@PathVariable Long productId, @RequestBody() ProductInfo productInfo) {
         Product product = findProductById(productId);
 
@@ -134,7 +135,7 @@ public class ProductService {
         );
     }
 
-    @RequestMapping(value = "/product/{productId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{productId}", method = RequestMethod.DELETE)
     public void delete(@PathVariable Long productId) {
         Product product = findProductById(productId);
 
