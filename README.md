@@ -44,3 +44,9 @@ curl --location --request GET 'http://192.168.248.136:8765/product/product/'
 ```bash
 curl --location --request GET 'http://192.168.248.136:8765/product/product/1'
 ```
+
+- turbine, install rabbitmq
+```bash
+docker pull rabbitmq
+docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 -d rabbitmq:latest
+```
