@@ -2,9 +2,6 @@ package com.icommerce.microservices.composite.productcompositeservice.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 public class ProductInfo implements Serializable {
     private static final long serialVersionUID = -3595275954796713966L;
