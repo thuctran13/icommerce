@@ -61,8 +61,12 @@ public class ReviewService {
         Review review = findReviewById(reviewId);
 
         //update field from request
-        review.setTitle(reviewInfo.getTitle());
-        review.setDescription(reviewInfo.getDescription());
+        if (reviewInfo.getTitle() != null) {
+            review.setTitle(reviewInfo.getTitle());
+        }
+        if (review.getDescription() != null) {
+            review.setDescription(reviewInfo.getDescription());
+        }
         review.setModifyTs(new Date());
         review.setModifyUid("admin");
         review.setCtn(review.getCtn() + 1);

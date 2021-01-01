@@ -15,6 +15,9 @@ zuul:
     product:
       path: /product/**
       serviceId: product
+    review:
+      path: /review/**
+      serviceId: review
     productcomposite:
       path: /productcomposite/**
       serviceId: productcomposite
