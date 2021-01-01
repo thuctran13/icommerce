@@ -14,8 +14,10 @@ zuul:
   routes:
     product:
       path: /product/**
-#    productcomposite:
-#      path: /productcomposite/**
+      serviceId: product
+    productcomposite:
+      path: /productcomposite/**
+      serviceId: productcomposite
 
 server:
   port: 8765
