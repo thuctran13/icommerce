@@ -52,7 +52,7 @@ public class ProductCompositeIntegration {
 
     public ResponseEntity<ReviewInfoList> findAllReviewsByProduct(Long productId) {
         URI uri = restUtil.getServiceUrl("review", "http://localhost:8081/review");
-        String url = uri.toString() + "/product/" + productId;
+        String url = uri.toString() + "/review/byProductId/" + productId;
         LOG.debug("FindAllReviewsByProduct from URL: {}", url);
 
         ResponseEntity<ReviewInfoList> findRes = restTemplate.getForEntity(url, ReviewInfoList.class);

@@ -22,8 +22,6 @@ public class ProductInfo implements Serializable {
     private BigDecimal price;
 
     private Double weight;
-    
-    private List<ReviewInfo> reviewInfoList = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -81,11 +79,4 @@ public class ProductInfo implements Serializable {
         this.weight = weight;
     }
 
-    public List<ReviewInfo> getReviewInfoList() {
-        return reviewInfoList;
-    }
-
-    public void setReviewInfoList(List<ReviewInfo> reviewInfoList) {
-        this.reviewInfoList = reviewInfoList;
-    }
 }
