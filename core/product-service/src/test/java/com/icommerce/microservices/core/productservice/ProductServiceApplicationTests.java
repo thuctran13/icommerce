@@ -72,7 +72,7 @@ class ProductServiceApplicationTests {
     }
 
     @Test
-    public void testFindById_NotFound() {
+    public void testFindById_NOK() {
         ResponseEntity<ProductInfo> findRes = findById(-1L);
         assertEquals(HttpStatus.NOT_FOUND, findRes.getStatusCode());
     }
@@ -154,57 +154,32 @@ class ProductServiceApplicationTests {
     }
 
     @Test
-    public void testGetAllProduct() {
-        HttpEntity entity;
+    public void testFindProductByKeyword() {
+        create("nokia 1", "Smartphone");
+        create("nokia 2", "Smartphone");
+        
+        String keyword = "nokia 1";
+        ResponseEntity<ProductInfoList> findAllByProductRes = findByKeyword(keyword);
 
-        //create new product
-        ProductInfo productCreationRes = new ProductInfo();
-        productCreationRes.setName("iPhone12");
-        productCreationRes.setDescription("Latest Apple Product");
-        productCreationRes.setPrice(BigDecimal.valueOf(1000));
-        productCreationRes.setWeight(400d);
-        entity = new HttpEntity<>(productCreationRes, httpHeaders);
-        ResponseEntity<ProductInfo> productRes = restTemplate.exchange(
-                createUrlWithPort("product/"),
-                HttpMethod.POST,
-                entity,
-                ProductInfo.class);
+        assertEquals(HttpStatus.OK, findAllByProductRes.getStatusCode());
+        assertNotNull(findAllByProductRes.getBody());
+        assertEquals(1, findAllByProductRes.getBody().getProductInfoList().size());
 
-        // find product by id
-        entity = new HttpEntity<>(null, httpHeaders);
-        productRes = restTemplate.exchange(
-                createUrlWithPort("product/" + productRes.getBody().getId()),
-                HttpMethod.GET,
-                entity,
-                ProductInfo.class);
+        keyword = "smartphone";
+        findAllByProductRes = findByKeyword(keyword);
+        assertEquals(HttpStatus.OK, findAllByProductRes.getStatusCode());
+        assertNotNull(findAllByProductRes.getBody());
+        assertEquals(2, findAllByProductRes.getBody().getProductInfoList().size());
+    }
 
-        // update product
-        productCreationRes.setName("iPhone 12 Pro");
-        entity = new HttpEntity<>(productCreationRes, httpHeaders);
-        productRes = restTemplate.exchange(
-                createUrlWithPort("product/" + productRes.getBody().getId()),
-                HttpMethod.PUT,
-                entity,
-                ProductInfo.class);
+    @Test
+    public void testFindProductByKeyword_NotFound() {
+        String keyword = "abcxzy";
+        ResponseEntity<ProductInfoList> findAllByProductRes = findByKeyword(keyword);
 
-        // delete
-        entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<Void> delete = restTemplate.exchange(
-                createUrlWithPort("product/" + productRes.getBody().getId()),
-                HttpMethod.DELETE,
-                entity,
-                Void.class);
-
-        // find all product
-        entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<ProductInfoList> findAllRes = restTemplate.exchange(
-                createUrlWithPort("product/"),
-                HttpMethod.GET,
-                entity,
-                ProductInfoList.class);
-
-        assertTrue(findAllRes.getBody() != null && findAllRes.getBody().getProductInfoList() != null);
-        assertTrue(findAllRes.getBody().getProductInfoList().isEmpty());
+        assertEquals(HttpStatus.OK, findAllByProductRes.getStatusCode());
+        assertNotNull(findAllByProductRes.getBody());
+        assertTrue(findAllByProductRes.getBody().getProductInfoList().isEmpty());
     }
 
     private ResponseEntity<ProductInfo> create(String name, String description) {
@@ -231,6 +206,15 @@ class ProductServiceApplicationTests {
                 HttpMethod.GET,
                 entity,
                 ProductInfo.class);
+    }
+
+    private ResponseEntity<ProductInfoList> findByKeyword(String keyword) {
+        entity = new HttpEntity<>(null, httpHeaders);
+        return restTemplate.exchange(
+                createUrlWithPort("product/find?keyword=" + keyword),
+                HttpMethod.GET,
+                entity,
+                ProductInfoList.class);
     }
 
     private String createUrlWithPort(String uri) {

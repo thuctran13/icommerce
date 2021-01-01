@@ -50,6 +50,19 @@ public class ProductCompositeIntegration {
         return findRes;
     }
 
+    public ResponseEntity<ProductInfoList> searchProduct(String keyword) {
+
+        URI uri = restUtil.getServiceUrl("product", "http://localhost:8081/product");
+        String url = uri.toString() + "/product/find?keyword=" + keyword;
+        LOG.debug("SearchProduct from URL: {}", url);
+
+        ResponseEntity<ProductInfoList> findRes = restTemplate.getForEntity(url, ProductInfoList.class);
+        LOG.debug("SearchProduct http-status: {}", findRes.getStatusCode());
+        LOG.debug("SearchProduct body: {}", findRes.getBody());
+
+        return findRes;
+    }
+
     public ResponseEntity<ReviewInfoList> findAllReviewsByProduct(Long productId) {
         URI uri = restUtil.getServiceUrl("review", "http://localhost:8081/review");
         String url = uri.toString() + "/review/byProductId/" + productId;

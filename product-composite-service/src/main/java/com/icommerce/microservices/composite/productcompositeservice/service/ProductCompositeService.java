@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.ws.rs.Consumes;
@@ -69,6 +70,28 @@ public class ProductCompositeService {
     public ResponseEntity<ProductAggregatedListResponse> findAll() {
         // 1. First get all product information
         ResponseEntity<ProductInfoList> productResult = productIntegration.findAllProducts();
+
+        if (!productResult.getStatusCode().is2xxSuccessful()) {
+            // We can't proceed, return whatever fault we got from the findProduct call
+            return restUtil.createResponse(null, productResult.getStatusCode());
+        }
+
+        ProductAggregatedListResponse response = new ProductAggregatedListResponse();
+        if (productResult.getBody() != null) {
+            productResult.getBody().getProductInfoList().forEach(productInfo -> {
+                ProductAggregated productAggregated = new ProductAggregated();
+                productAggregated.setProductInfo(productInfo);
+                response.getProductAggregatedList().add(productAggregated);
+            });
+        }
+
+        return restUtil.createOkResponse(response);
+    }
+
+    @RequestMapping("/product/find")
+    public ResponseEntity<ProductAggregatedListResponse> searchProduct(@RequestParam(name = "keyword") String keyword) {
+        // 1. First get all product information
+        ResponseEntity<ProductInfoList> productResult = productIntegration.searchProduct(keyword);
 
         if (!productResult.getStatusCode().is2xxSuccessful()) {
             // We can't proceed, return whatever fault we got from the findProduct call

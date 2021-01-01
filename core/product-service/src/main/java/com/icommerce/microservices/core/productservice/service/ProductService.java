@@ -1,6 +1,7 @@
 package com.icommerce.microservices.core.productservice.service;
 
 import com.icommerce.microservices.core.productservice.dao.ProductDAO;
+import com.icommerce.microservices.core.productservice.dto.DTOConverter;
 import com.icommerce.microservices.core.productservice.dto.ProductInfo;
 import com.icommerce.microservices.core.productservice.dto.ProductInfoList;
 import com.icommerce.microservices.core.productservice.entity.Product;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -34,16 +36,9 @@ public class ProductService {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ProductInfoList findAll() {
         ProductInfoList productResponse = new ProductInfoList();
-        productDAO.findAll().forEach(product -> productResponse.getProductInfoList().add(new ProductInfo(
-                product.getId(),
-                product.getName(),
-                product.getDescription(),
-                product.getState(),
-                product.getStatus(),
-                product.getPrice(),
-                product.getWeight(),
-                product.getCreationTs(),
-                product.getModifyTs())));
+        productDAO.findAll()
+                .forEach(product -> productResponse.getProductInfoList()
+                        .add(DTOConverter.toProductInfo(product)));
 
         return productResponse;
     }
@@ -52,46 +47,16 @@ public class ProductService {
     public ProductInfo find(@PathVariable Long productId) {
         Product product = findProductById(productId);
 
-        return new ProductInfo(
-                product.getId(),
-                product.getName(),
-                product.getDescription(),
-                product.getState(),
-                product.getStatus(),
-                product.getPrice(),
-                product.getWeight(),
-                product.getCreationTs(),
-                product.getModifyTs()
-        );
+        return DTOConverter.toProductInfo(product);
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public ProductInfo create(@RequestBody() ProductInfo productInfo) {
-        Product product = new Product();
-        product.setName(productInfo.getName());
-        product.setDescription(productInfo.getDescription());
-        product.setState(productInfo.getState());
-        product.setStatus(productInfo.getStatus());
-        product.setPrice(productInfo.getPrice());
-        product.setWeight(productInfo.getWeight());
-        product.setCreationTs(new Date());
-        product.setCreationUid("admin");
-        product.setModifyTs(new Date());
-        product.setModifyUid("admin");
-        product.setCtn(0L);
+        Product product = DTOConverter.toProduct(productInfo, new Product());
+
         product = productDAO.save(product);
 
-        return new ProductInfo(
-                product.getId(),
-                product.getName(),
-                product.getDescription(),
-                product.getState(),
-                product.getStatus(),
-                product.getPrice(),
-                product.getWeight(),
-                product.getCreationTs(),
-                product.getModifyTs()
-        );
+        return DTOConverter.toProductInfo(product);
     }
 
     @RequestMapping(value = "/{productId}", method = RequestMethod.PUT)
@@ -122,17 +87,7 @@ public class ProductService {
         product.setCtn(product.getCtn() + 1);
         product = productDAO.save(product);
 
-        return new ProductInfo(
-                product.getId(),
-                product.getName(),
-                product.getDescription(),
-                product.getState(),
-                product.getStatus(),
-                product.getPrice(),
-                product.getWeight(),
-                product.getCreationTs(),
-                product.getModifyTs()
-        );
+        return DTOConverter.toProductInfo(product);
     }
 
     @RequestMapping(value = "/{productId}", method = RequestMethod.DELETE)
@@ -140,6 +95,16 @@ public class ProductService {
         Product product = findProductById(productId);
 
         productDAO.delete(product);
+    }
+
+    @RequestMapping(value = "/find", method = RequestMethod.GET)
+    public ProductInfoList searchProduct(@RequestParam(name = "keyword") String keyword) {
+        ProductInfoList productInfoList = new ProductInfoList();
+        productDAO.searchProduct(keyword).forEach(product -> 
+                productInfoList.getProductInfoList().add(DTOConverter.toProductInfo(product))
+        );
+
+        return productInfoList;
     }
 
     private Product findProductById(Long id) {
