@@ -9,7 +9,11 @@ Besides, back office users can manage to add, update or delete product, review.
 - Java 8
 - jq https://stedolan.github.io/jq/download/
 
-<h2>Target Architecture - see image icommerce-architect.png
+<h2>Application Structure
+
+<h3>Target Architecture
+
+see image icommerce-architect.png
 
 - infrastructure
     - Discovery server: Netflix Eureka
@@ -20,6 +24,10 @@ Besides, back office users can manage to add, update or delete product, review.
     - Review Service
 - Composite Services
     - Product Composite Service
+
+<h3> Design Pattern
+
+- Builder pattern. see class `ProductInfoBuilder.java`
 
 Note:
 In product composite service, Ribbon load-balancer (F5) will automatically route request to available instances. 
