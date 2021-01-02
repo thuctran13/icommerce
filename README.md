@@ -137,7 +137,7 @@ curl --location --request POST 'http://localhost:8765/productcomposite/product/'
 }' | jq .
 ```
 
-- Update product
+- Update product: id = 1 created earlier in this case
 ```bash
 curl --location --request PUT 'http://localhost:8765/productcomposite/product/1' \
 --header 'Content-Type: application/json' \
@@ -152,7 +152,7 @@ curl --location --request PUT 'http://localhost:8765/productcomposite/product/1'
 curl --location --request GET 'http://localhost:8765/productcomposite/product/' | jq .
 ```
 
-- Find product by id:
+- Find product by id: id=1 created earlier in this case
 ```bash
 curl --location --request GET 'http://localhost:8765/productcomposite/product/1' | jq .
 ```
@@ -162,7 +162,7 @@ curl --location --request GET 'http://localhost:8765/productcomposite/product/1'
 curl --location --request GET 'http://localhost:8765/productcomposite/product/find?keyword=iphone12' | jq .
 ```
 
-- Delete product 
+- Delete product: id = 1 created earlier in this case
 ```bash
 curl --location --request DELETE 'http://localhost:8765/productcomposite/product/1'
 ```
@@ -186,7 +186,7 @@ curl --location --request POST 'http://localhost:8765/productcomposite/review/' 
 }'  | jq .
 ```
 
-- Update review:
+- Update review: id = 1 created earlier in this case
 ```bash
 curl --location --request PUT 'http://localhost:8765/productcomposite/review/1' \
 --header 'Content-Type: application/json' \
@@ -196,7 +196,7 @@ curl --location --request PUT 'http://localhost:8765/productcomposite/review/1' 
 }' | jq .
 ```
 
-- Delete review:
+- Delete review: id = 1 created earlier in this case
 ```bash
 curl --location --request DELETE 'http://localhost:8765/productcomposite/review/1'
 ```
@@ -206,12 +206,12 @@ curl --location --request DELETE 'http://localhost:8765/productcomposite/review/
 curl --location --request GET 'http://localhost:8765/productcomposite/review/' | jq .
 ```
 
-Find review by ID, id=1 in this case
+Find review by ID: id=2 created earlier in this case
 ```bash
 curl --location --request GET 'http://localhost:8765/productcomposite/review/2' | jq .
 ```
 
-Find reviews by product id, productId = 1 in this case
+Find reviews by product id: productId = 2 created earlier in this case
 ```bash
 curl --location --request GET 'http://localhost:8765/productcomposite/review/findByProduct/2' | jq .
 ```
