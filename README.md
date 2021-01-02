@@ -27,6 +27,46 @@ Basically you can start multiple instances of product of review services as desi
 Ribbon will distribute request to available and low load instance.
 See project `product-composite-service` class `RestUtil.java` method `getServiceUrl(String serviceId, String fallbackUri)`
 
+<h2> Framwork and dependencies
+
+- Skeleton project: Spring boot and initiated by https://start.spring.io/
+- Discovery server: 
+    - Actuator: for health check
+    - Netflix Eureka Server: for service registry
+```bash
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
+```
+- Edge server:
+    - Eureka client: client to connect to Eureka Server
+    - Actuator: for health check
+    - Zuul: to play a role of keeper for incomming request and route to specify service
+```bash
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-zuul'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+```
+- Product Composite service:
+    - Actuator: for health check
+    - Eureka client: client to connect to Eureka Server
+```bash
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+```
+- Product Service, Review Service
+    - Actuator: for health check
+    - Eureka client: client to connect to Eureka Server
+    - H2: for datasource.
+    - JPA: for perform CRUD entity.
+```bash
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    runtimeOnly 'com.h2database:h2'
+```
+
 <h2>Start Application
 
 - install java jdk 1.8
@@ -34,7 +74,7 @@ See project `product-composite-service` class `RestUtil.java` method `getService
 ```bash
 ./build-all.sh
 ```
-- start infrastructure server:
+- start infrastructure servers:
 - Discovery server
 ```bash
 cd support/discovery-server/
@@ -50,14 +90,14 @@ cd support/discovery-server/
 cd core/product-service
 ./gradlew bootRun
 ```
-- Review-service
+- Review Service
 ```bash
 cd core/review-service
 ./gradlew bootRun
 ```
-- Composite Service
+- Product Composite Service
 ```bash
-cd product-composite-service
+cd composite/product-composite-service
 ./gradlew bootRun
 ```
 
@@ -66,7 +106,8 @@ After all services started successfully, check instances registered with Eureka 
 curl -s -H "Accept: application/json" http://localhost:8761/eureka/apps | jq '.applications.application[] | {service: .name, ip: .instance[].ipAddr, port: .instance[].port, status: .instance[].status, healthCheckUrl: .instance[].healthCheckUrl}'
 ```
 
-- For testing, you have to ensure all services are up. 
+- For testing, you have to ensure all services are up.
+- Please stay still and wait for a minute to ensure all services are up and registered.
 
 <h2> API Explaination
 <h3> Product Composite service. See target architecture, after receiving request from consumer, this request will forward call to core services (either product or review service)
@@ -152,7 +193,7 @@ curl --location --request PUT 'http://localhost:8765/productcomposite/review/1' 
 --data '{
     "description": "Well package, look good in general",
     "productId": "2"
-}'
+}' | jq .
 ```
 
 - Delete review:
@@ -205,7 +246,7 @@ This will not allowed from outside but by internal calls.
 
 <h2> Service flow:
 
-- External requests: there's no direct communication between public consumers and core services. These requests need to go throw compposite service. Config for this is defined in project `edge-server` class `application.yml`.
+- External requests: there's no direct communication between public consumers and core services. These requests need to go throw composite service. Config for this is defined in project `edge-server` class `application.yml`.
 - Internal requests: all services in composite and core layer are allowed to make connections.  
 
 <h2>Use cases
@@ -220,7 +261,7 @@ This will not allowed from outside but by internal calls.
 - Additionally, I can add review to each product. This will help to rate product quality.
 - All reviews rated by customer will be available in product details (see api `Find product by id`).
 
-<h2>Next chapter:
+<h2>TODO list:
 
 - Implement Circuit breaker(Hystrix) to keep system zero down time
 - Dockerize all services.
