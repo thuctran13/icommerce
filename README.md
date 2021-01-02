@@ -15,11 +15,17 @@ Besides, back office users can manage to add, update or delete product, review.
     - Discovery server: Netflix Eureka
     - Dynamic routing & Load Balancer: Netflix Ribbon
     - Edge Server: Netflix Zuul
-- Core:
+- Core services:
     - Product Service
     - Review Service
-- Composite Service
-    - Composite Service
+- Composite Services
+    - Product Composite Service
+
+Note:
+In product composite service, Ribbon load-balancer (F5) will automatically route request to available instances. 
+Basically you can start multiple instances of product of review services as desired.
+Ribbon will distribute request to available and low load instance.
+See project `product-composite-service` class `RestUtil.java` method `getServiceUrl(String serviceId, String fallbackUri)`
 
 <h2>Start Application
 
