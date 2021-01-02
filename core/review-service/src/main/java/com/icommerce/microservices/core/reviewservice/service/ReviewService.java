@@ -1,6 +1,7 @@
 package com.icommerce.microservices.core.reviewservice.service;
 
 import com.icommerce.microservices.core.reviewservice.dao.ReviewDAO;
+import com.icommerce.microservices.core.reviewservice.dto.DTOConverter;
 import com.icommerce.microservices.core.reviewservice.dto.ReviewInfo;
 import com.icommerce.microservices.core.reviewservice.dto.ReviewInfoList;
 import com.icommerce.microservices.core.reviewservice.entity.Review;
@@ -34,13 +35,8 @@ public class ReviewService {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public ReviewInfoList findAll() {
         ReviewInfoList productResponse = new ReviewInfoList();
-        reviewDAO.findAll().forEach(review -> productResponse.getReviewInfoList().add(new ReviewInfo(
-                review.getId(),
-                review.getTitle(),
-                review.getDescription(),
-                review.getProductId(),
-                review.getCreationTs(),
-                review.getModifyTs())));
+        reviewDAO.findAll().forEach(review -> productResponse.getReviewInfoList()
+                .add(DTOConverter.toReviewInfo(review)));
 
         return productResponse;
     }
@@ -49,37 +45,15 @@ public class ReviewService {
     public ReviewInfo find(@PathVariable Long productId) {
         Review review = findReviewById(productId);
 
-        return new ReviewInfo(
-                review.getId(),
-                review.getTitle(),
-                review.getDescription(),
-                review.getProductId(),
-                review.getCreationTs(),
-                review.getModifyTs()
-        );
+        return DTOConverter.toReviewInfo(review);
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public ReviewInfo create(@RequestBody() ReviewInfo reviewInfo) {
-        Review review = new Review();
-        review.setTitle(reviewInfo.getTitle());
-        review.setDescription(reviewInfo.getDescription());
-        review.setProductId(reviewInfo.getProductId());
-        review.setCreationTs(new Date());
-        review.setCreationUid("admin");
-        review.setModifyTs(new Date());
-        review.setModifyUid("admin");
-        review.setCtn(0L);
+        Review review = DTOConverter.toReview(reviewInfo, new Review());
         review = reviewDAO.save(review);
 
-        return new ReviewInfo(
-                review.getId(),
-                review.getTitle(),
-                review.getDescription(),
-                review.getProductId(),
-                review.getCreationTs(),
-                review.getModifyTs()
-        );
+        return DTOConverter.toReviewInfo(review);
     }
 
     @RequestMapping(value = "/{reviewId}", method = RequestMethod.PUT)
@@ -87,21 +61,18 @@ public class ReviewService {
         Review review = findReviewById(reviewId);
 
         //update field from request
-        review.setTitle(reviewInfo.getTitle());
-        review.setDescription(reviewInfo.getDescription());
+        if (reviewInfo.getTitle() != null) {
+            review.setTitle(reviewInfo.getTitle());
+        }
+        if (review.getDescription() != null) {
+            review.setDescription(reviewInfo.getDescription());
+        }
         review.setModifyTs(new Date());
         review.setModifyUid("admin");
         review.setCtn(review.getCtn() + 1);
         review = reviewDAO.save(review);
 
-        return new ReviewInfo(
-                review.getId(),
-                review.getTitle(),
-                review.getDescription(),
-                review.getProductId(),
-                review.getCreationTs(),
-                review.getModifyTs()
-        );
+        return DTOConverter.toReviewInfo(review);
     }
 
     @RequestMapping(value = "/{reviewId}", method = RequestMethod.DELETE)
@@ -115,15 +86,8 @@ public class ReviewService {
     public ReviewInfoList findAllByProductId(@PathVariable Long productId) {
         ReviewInfoList reviewResponse = new ReviewInfoList();
         reviewDAO.findAllByProductId(productId)
-                .forEach(review -> reviewResponse.getReviewInfoList().add(
-                        new ReviewInfo(
-                                review.getId(),
-                                review.getTitle(),
-                                review.getDescription(),
-                                review.getProductId(),
-                                review.getCreationTs(),
-                                review.getModifyTs()
-                        )));
+                .forEach(review -> reviewResponse.getReviewInfoList()
+                        .add(DTOConverter.toReviewInfo(review)));
 
         return reviewResponse;
     }

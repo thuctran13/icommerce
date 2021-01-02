@@ -2,6 +2,7 @@ package com.icommerce.microservices.composite.productcompositeservice.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 public class ProductInfo implements Serializable {
     private static final long serialVersionUID = -3595275954796713966L;
@@ -19,6 +20,10 @@ public class ProductInfo implements Serializable {
     private BigDecimal price;
 
     private Double weight;
+
+    private Date creationTs;
+
+    private Date modifyTs;
 
     public Long getId() {
         return id;
@@ -76,4 +81,19 @@ public class ProductInfo implements Serializable {
         this.weight = weight;
     }
 
+    public Date getCreationTs() {
+        return creationTs;
+    }
+
+    public void setCreationTs(Date creationTs) {
+        this.creationTs = creationTs;
+    }
+
+    public Date getModifyTs() {
+        return modifyTs;
+    }
+
+    public void setModifyTs(Date modifyTs) {
+        this.modifyTs = modifyTs;
+    }
 }
