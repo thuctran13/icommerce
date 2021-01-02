@@ -26,7 +26,7 @@ Besides, back office users can manage to add, update or delete product, review.
 - install java jdk 1.8
 - build project:
 ```bash
-./gradlew build-all.sh
+./build-all.sh
 ```
 - start infrastructure server:
 - Discovery server
@@ -60,11 +60,13 @@ After all services started successfully, check instances registered with Eureka 
 curl -s -H "Accept: application/json" http://localhost:8761/eureka/apps | jq '.applications.application[] | {service: .name, ip: .instance[].ipAddr, port: .instance[].port, status: .instance[].status, healthCheckUrl: .instance[].healthCheckUrl}'
 ```
 
+- For testing, you have to ensure all services are up. 
+
 <h2> API Explaination
 <h3> Product Service
 
 - Service class: `ProductService.java`
-- Test class: `ProductServiceApplicationTests`
+- Test class: `ProductServiceApplicationTests.java`
 - Create product:
 ```bash
 curl --location --request POST 'http://localhost:8765/product/product/' \
@@ -92,7 +94,7 @@ curl --location --request POST 'http://localhost:8765/product/product/' \
 
 - Update product: id will be the one created earlier, in this case id = 1
 ```bash
-curl --location --request PUT 'http://192.168.248.136:8765/product/product/1' \
+curl --location --request PUT 'http://localhost:8765/product/product/1' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "description": "top smartphone 2020",
@@ -102,22 +104,22 @@ curl --location --request PUT 'http://192.168.248.136:8765/product/product/1' \
 
 - Delete product: 
 ```bash
-curl --location --request DELETE 'http://192.168.248.136:8765/product/product/1'
+curl --location --request DELETE 'http://localhost:8765/product/product/1'
 ```
 
 - Find all products:
 ```bash
-curl --location --request GET 'http://192.168.248.136:8765/product/product/'
+curl --location --request GET 'http://localhost:8765/product/product/'
 ```
 
 - Find product by id:
 ```bash
-curl --location --request GET 'http://192.168.248.136:8765/product/product/1'
+curl --location --request GET 'http://localhost:8765/product/product/1'
 ```
 
 - Search product: this will find all products by keyword matching name or description
 ```bash
-curl --location --request GET 'http://192.168.248.136:8765/product/product/find?keyword=iphone12'
+curl --location --request GET 'http://localhost:8765/product/product/find?keyword=iphone12'
 ```
 
 <h3> Review Service
@@ -126,7 +128,7 @@ curl --location --request GET 'http://192.168.248.136:8765/product/product/find?
 - Test class: `ReviewServiceApplicatonTests.java`
 - Create review
 ```bash
-curl --location --request POST 'http://192.168.248.136:8765/review/review/' \
+curl --location --request POST 'http://localhost:8765/review/review/' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "title":"Good product",
@@ -137,7 +139,7 @@ curl --location --request POST 'http://192.168.248.136:8765/review/review/' \
 
 - Update review:
 ```bash
-curl --location --request PUT 'http://192.168.248.136:8765/review/review/1' \
+curl --location --request PUT 'http://localhost:8765/review/review/1' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "description": "Well package, look good in general",
@@ -147,7 +149,22 @@ curl --location --request PUT 'http://192.168.248.136:8765/review/review/1' \
 
 - Delete review:
 ```bash
-curl --location --request DELETE 'http://192.168.248.136:8765/review/review/1'
+curl --location --request DELETE 'http://localhost:8765/review/review/1'
+```
+
+- Find all reviews
+```bash
+curl --location --request GET 'http://192.168.248.136:8765/review/review/'
+```
+
+Find review by ID, id=1 in this case
+```bash
+curl --location --request GET 'http://192.168.248.136:8765/review/review/1'
+```
+
+Find reviews by product id, productId = 1 in this case
+```bash
+curl --location --request GET 'http://192.168.248.136:8765/review/review/byProductId/1'
 ```
 
 <h3> Composite Service
@@ -156,21 +173,21 @@ curl --location --request DELETE 'http://192.168.248.136:8765/review/review/1'
 
 - Find all products
 ```bash
-curl --location --request GET 'http://192.168.248.136:8765/productcomposite/product'
+curl --location --request GET 'http://localhost:8765/productcomposite/product'
 ```
 
 - Find product by id
 ```bash
-curl --location --request GET 'http://192.168.248.136:8765/productcomposite/product/1'
+curl --location --request GET 'http://localhost:8765/productcomposite/product/1'
 ```
 
 - Search product: this will find all products by keyword matching name or description
 ```bash
-curl --location --request GET 'http://192.168.248.136:8765/productcomposite/product?keyword=iPhone12'
+curl --location --request GET 'http://localhost:8765/productcomposite/product?keyword=iPhone12'
 ```
 - Add review by customer
 ```bash
-curl --location --request POST 'http://192.168.248.136:8765/productcomposite/product/review/createByCustomer' \
+curl --location --request POST 'http://localhost:8765/productcomposite/product/review/createByCustomer' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "title" : "Product OK",
@@ -184,10 +201,11 @@ curl --location --request POST 'http://192.168.248.136:8765/productcomposite/pro
 
 - Admin user allows to to manage product via product api. She could modify description as well as price instantly to keep product info up to date.
 - She could also able to manage review added by customer. Any spam message can be deleted by using review service. This is amazing api to get rid of from product spam.
+- Product and review service are considered as internal service. They are consumed by backoffice user only.
 
 <h3> Customer/Shopper
 
 - As a valuable customer, I search all products in shop, search by product name of description by using `composite service`.
 - Additionally, I can add review to each product. This will help to rate product quality.
 - All reviews rated by customer will be available in product details (see api `Find product by id`).
-
+- Composite service is a public service where customer can search, view details or add reviews. 

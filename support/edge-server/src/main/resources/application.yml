@@ -12,12 +12,12 @@ endpoints:
 zuul:
   ignoredServices: "*"
   routes:
-    product:
-      path: /product/**
-      serviceId: product
-    review:
-      path: /review/**
-      serviceId: review
+#    product:
+#      path: /product/**
+#      serviceId: product
+#    review:
+#      path: /review/**
+#      serviceId: review
     productcomposite:
       path: /productcomposite/**
       serviceId: productcomposite

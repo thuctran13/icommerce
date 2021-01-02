@@ -8,6 +8,9 @@ import com.icommerce.microservices.composite.productcompositeservice.util.RestUt
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -30,11 +33,11 @@ public class ProductCompositeIntegration {
         String url = uri.toString() + "/product/";
         LOG.debug("FindAllProducts from URL: {}", url);
 
-        ResponseEntity<ProductInfoList> findRes = restTemplate.getForEntity(url, ProductInfoList.class);
-        LOG.debug("FindAllProducts http-status: {}", findRes.getStatusCode());
-        LOG.debug("FindAllProducts body: {}", findRes.getBody());
+        ResponseEntity<ProductInfoList> responseEntity = restTemplate.getForEntity(url, ProductInfoList.class);
+        LOG.debug("FindAllProducts http-status: {}", responseEntity.getStatusCode());
+        LOG.debug("FindAllProducts body: {}", responseEntity.getBody());
 
-        return findRes;
+        return responseEntity;
     }
 
     public ResponseEntity<ProductInfo> findProduct(Long productId) {
@@ -43,11 +46,46 @@ public class ProductCompositeIntegration {
         String url = uri.toString() + "/product/" + productId;
         LOG.debug("FindProduct from URL: {}", url);
 
-        ResponseEntity<ProductInfo> findRes = restTemplate.getForEntity(url, ProductInfo.class);
-        LOG.debug("FindProduct http-status: {}", findRes.getStatusCode());
-        LOG.debug("FindProduct body: {}", findRes.getBody());
+        ResponseEntity<ProductInfo> responseEntity = restTemplate.getForEntity(url, ProductInfo.class);
+        LOG.debug("FindProduct http-status: {}", responseEntity.getStatusCode());
+        LOG.debug("FindProduct body: {}", responseEntity.getBody());
 
-        return findRes;
+        return responseEntity;
+    }
+
+    public ResponseEntity<ProductInfo> createProduct(ProductInfo productInfo) {
+
+        URI uri = restUtil.getServiceUrl("product", "http://localhost:8081/product");
+        String url = uri.toString() + "/product/";
+        LOG.debug("createProduct from URL: {}", url);
+
+        ResponseEntity<ProductInfo> responseEntity = restTemplate.postForEntity(url, productInfo, ProductInfo.class);
+        LOG.debug("createProduct http-status: {}", responseEntity.getStatusCode());
+        LOG.debug("createProduct body: {}", responseEntity.getBody());
+
+        return responseEntity;
+    }
+
+    public ResponseEntity<ProductInfo> updateProduct(Long productId, ProductInfo productInfo) {
+
+        URI uri = restUtil.getServiceUrl("product", "http://localhost:8081/product");
+        String url = uri.toString() + "/product/" + productId;
+        LOG.debug("updateProduct from URL: {}", url);
+        
+        ResponseEntity<ProductInfo> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<>(productInfo), ProductInfo.class);
+        LOG.debug("updateProduct http-status: {}", responseEntity.getStatusCode());
+        LOG.debug("updateProduct body: {}", responseEntity.getBody());
+
+        return responseEntity;
+    }
+ 
+    public void deleteProduct(Long productId) {
+
+        URI uri = restUtil.getServiceUrl("product", "http://localhost:8081/product");
+        String url = uri.toString() + "/product/" + productId;
+        LOG.debug("deleteProduct from URL: {}", url);
+
+        restTemplate.delete(url);
     }
 
     public ResponseEntity<ProductInfoList> searchProduct(String keyword) {
@@ -56,11 +94,11 @@ public class ProductCompositeIntegration {
         String url = uri.toString() + "/product/find?keyword=" + keyword;
         LOG.debug("SearchProduct from URL: {}", url);
 
-        ResponseEntity<ProductInfoList> findRes = restTemplate.getForEntity(url, ProductInfoList.class);
-        LOG.debug("SearchProduct http-status: {}", findRes.getStatusCode());
-        LOG.debug("SearchProduct body: {}", findRes.getBody());
+        ResponseEntity<ProductInfoList> responseEntity = restTemplate.getForEntity(url, ProductInfoList.class);
+        LOG.debug("SearchProduct http-status: {}", responseEntity.getStatusCode());
+        LOG.debug("SearchProduct body: {}", responseEntity.getBody());
 
-        return findRes;
+        return responseEntity;
     }
 
     public ResponseEntity<ReviewInfoList> findAllReviewsByProduct(Long productId) {
@@ -68,22 +106,66 @@ public class ProductCompositeIntegration {
         String url = uri.toString() + "/review/byProductId/" + productId;
         LOG.debug("FindAllReviewsByProduct from URL: {}", url);
 
-        ResponseEntity<ReviewInfoList> findRes = restTemplate.getForEntity(url, ReviewInfoList.class);
-        LOG.info("FindAllReviewsByProduct http-status: {}", findRes.getStatusCode());
-        LOG.info("FindAllReviewsByProduct body: {}", findRes.getBody());
+        ResponseEntity<ReviewInfoList> responseEntity = restTemplate.getForEntity(url, ReviewInfoList.class);
+        LOG.info("FindAllReviewsByProduct http-status: {}", responseEntity.getStatusCode());
+        LOG.info("FindAllReviewsByProduct body: {}", responseEntity.getBody());
 
-        return findRes;
+        return responseEntity;
     }
 
-    public ResponseEntity<ReviewInfo> createReviewByCustomer(ReviewInfo reviewInfo) {
+    public ResponseEntity<ReviewInfoList> findAllReviews() {
         URI uri = restUtil.getServiceUrl("review", "http://localhost:8081/review");
         String url = uri.toString() + "/review/";
-        LOG.debug("CreateReviewByCustomer from URL: {}", url);
+        LOG.debug("FindAllReviewsByProduct from URL: {}", url);
+
+        ResponseEntity<ReviewInfoList> responseEntity = restTemplate.getForEntity(url, ReviewInfoList.class);
+        LOG.info("FindAllReviewsByProduct http-status: {}", responseEntity.getStatusCode());
+        LOG.info("FindAllReviewsByProduct body: {}", responseEntity.getBody());
+
+        return responseEntity;
+    }
+
+    public ResponseEntity<ReviewInfo> findReviewById(Long reviewId) {
+        URI uri = restUtil.getServiceUrl("review", "http://localhost:8081/review");
+        String url = uri.toString() + "/review/" + reviewId;
+        LOG.debug("FindAllReviewsByProduct from URL: {}", url);
+
+        ResponseEntity<ReviewInfo> responseEntity = restTemplate.getForEntity(url, ReviewInfo.class);
+        LOG.info("FindAllReviewsByProduct http-status: {}", responseEntity.getStatusCode());
+        LOG.info("FindAllReviewsByProduct body: {}", responseEntity.getBody());
+
+        return responseEntity;
+    }
+
+    public ResponseEntity<ReviewInfo> createReview(ReviewInfo reviewInfo) {
+        URI uri = restUtil.getServiceUrl("review", "http://localhost:8081/review");
+        String url = uri.toString() + "/review/";
+        LOG.debug("createReview from URL: {}", url);
 
         ResponseEntity<ReviewInfo> createReviewRes = restTemplate.postForEntity(url, reviewInfo, ReviewInfo.class);
-        LOG.info("CreateReviewByCustomer http-status: {}", createReviewRes.getStatusCode());
-        LOG.info("CreateReviewByCustomer body: {}", createReviewRes.getBody());
+        LOG.info("createReview http-status: {}", createReviewRes.getStatusCode());
+        LOG.info("createReview body: {}", createReviewRes.getBody());
 
         return createReviewRes;
+    }
+
+    public ResponseEntity<ReviewInfo> updateReview(Long reviewId, ReviewInfo reviewInfo) {
+        URI uri = restUtil.getServiceUrl("review", "http://localhost:8081/review");
+        String url = uri.toString() + "/review/" + reviewId;
+        LOG.debug("updateReview from URL: {}", url);
+
+        ResponseEntity<ReviewInfo> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, new HttpEntity<>(reviewInfo), ReviewInfo.class);
+        LOG.debug("updateReview http-status: {}", responseEntity.getStatusCode());
+        LOG.debug("updateReview body: {}", responseEntity.getBody());
+
+        return responseEntity;
+    }
+
+    public void deteleReview(Long reviewId) {
+        URI uri = restUtil.getServiceUrl("review", "http://localhost:8081/review");
+        String url = uri.toString() + "/review/" + reviewId;
+        LOG.debug("CreateReviewByCustomer from URL: {}", url);
+        
+        restTemplate.delete(url);
     }
 }

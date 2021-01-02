@@ -10,6 +10,7 @@ import com.icommerce.microservices.composite.productcompositeservice.util.RestUt
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -88,6 +89,35 @@ public class ProductCompositeService {
         return restUtil.createOkResponse(response);
     }
 
+    @RequestMapping(value = "/product", method = RequestMethod.POST)
+    public ResponseEntity<ProductInfo> createProduct(@RequestBody ProductInfo productInfo) {
+        ResponseEntity<ProductInfo> createRes = productIntegration.createProduct(productInfo);
+        if (!createRes.getStatusCode().is2xxSuccessful()) {
+            return restUtil.createResponse(null, createRes.getStatusCode());
+        }
+        return restUtil.createOkResponse(createRes.getBody());
+    }
+
+    @RequestMapping(value = "/product/{productId}", method = RequestMethod.PUT)
+    public ResponseEntity<ProductInfo> updateProduct(@PathVariable Long productId, @RequestBody ProductInfo productInfo) {
+        ResponseEntity<ProductInfo> responseEntity = productIntegration.updateProduct(productId, productInfo);
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            return restUtil.createResponse(null, responseEntity.getStatusCode());
+        }
+        return restUtil.createOkResponse(responseEntity.getBody());
+    }
+
+    @RequestMapping(value = "/product/{productId}", method = RequestMethod.DELETE)
+    public ResponseEntity<ProductInfo> deleteProduct(@PathVariable Long productId) {
+        try {
+            productIntegration.deleteProduct(productId);
+            return restUtil.createResponse(null, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.warn("Exception occur while deleting product", e);
+            return restUtil.createResponse(null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @RequestMapping("/product/find")
     public ResponseEntity<ProductAggregatedListResponse> searchProduct(@RequestParam(name = "keyword") String keyword) {
         // 1. First get all product information
@@ -110,14 +140,68 @@ public class ProductCompositeService {
         return restUtil.createOkResponse(response);
     }
 
-    @RequestMapping(value = "/product/review/createByCustomer", method = RequestMethod.POST)
-    public ResponseEntity<ReviewInfo> createReviewByCustomer(@RequestBody ReviewInfo reviewInfo) {
-        ResponseEntity<ReviewInfo> reviewInfoResponse = productIntegration.createReviewByCustomer(reviewInfo);
+    @RequestMapping(value = "/review/findByProduct/{productId}", method = RequestMethod.GET)
+    public ResponseEntity<ReviewInfoList> findAllByProduct(@PathVariable Long productId) {
+        ResponseEntity<ReviewInfoList> reviewInfoResponse = productIntegration.findAllReviewsByProduct(productId);
         if (!reviewInfoResponse.getStatusCode().is2xxSuccessful()) {
             // We can't proceed, return whatever fault we got from the findProduct call
             return restUtil.createResponse(null, reviewInfoResponse.getStatusCode());
         }
 
         return restUtil.createOkResponse(reviewInfoResponse.getBody());
+    }
+
+    @RequestMapping(value = "review/", method = RequestMethod.GET)
+    public ResponseEntity<ReviewInfoList> findAllReviews() {
+        ResponseEntity<ReviewInfoList> reviewInfoResponse = productIntegration.findAllReviews();
+        if (!reviewInfoResponse.getStatusCode().is2xxSuccessful()) {
+            // We can't proceed, return whatever fault we got from the findProduct call
+            return restUtil.createResponse(null, reviewInfoResponse.getStatusCode());
+        }
+
+        return restUtil.createOkResponse(reviewInfoResponse.getBody());
+    }
+
+    @RequestMapping(value = "review/{reviewId}", method = RequestMethod.GET)
+    public ResponseEntity<ReviewInfo> findReviewById(@PathVariable Long reviewId) {
+        ResponseEntity<ReviewInfo> reviewInfoResponse = productIntegration.findReviewById(reviewId);
+        if (!reviewInfoResponse.getStatusCode().is2xxSuccessful()) {
+            // We can't proceed, return whatever fault we got from the findProduct call
+            return restUtil.createResponse(null, reviewInfoResponse.getStatusCode());
+        }
+
+        return restUtil.createOkResponse(reviewInfoResponse.getBody());
+    }
+
+    @RequestMapping(value = "review", method = RequestMethod.POST)
+    public ResponseEntity<ReviewInfo> createReview(@RequestBody ReviewInfo reviewInfo) {
+        ResponseEntity<ReviewInfo> reviewInfoResponse = productIntegration.createReview(reviewInfo);
+        if (!reviewInfoResponse.getStatusCode().is2xxSuccessful()) {
+            // We can't proceed, return whatever fault we got from the findProduct call
+            return restUtil.createResponse(null, reviewInfoResponse.getStatusCode());
+        }
+
+        return restUtil.createOkResponse(reviewInfoResponse.getBody());
+    }
+
+    @RequestMapping(value = "/review/{reviewId}", method = RequestMethod.PUT)
+    public ResponseEntity<ReviewInfo> updateReview(@PathVariable Long reviewId, @RequestBody ReviewInfo reviewInfo) {
+
+        ResponseEntity<ReviewInfo> responseEntity = productIntegration.updateReview(reviewId, reviewInfo);
+        if (!responseEntity.getStatusCode().is2xxSuccessful()) {
+            return restUtil.createResponse(null, responseEntity.getStatusCode());
+        }
+        return restUtil.createOkResponse(responseEntity.getBody());
+    }
+
+    @RequestMapping(value = "/review/{reviewId}", method = RequestMethod.DELETE)
+    public ResponseEntity<ReviewInfo> deleteReview(@PathVariable Long reviewId) {
+        try {
+            productIntegration.deteleReview(reviewId);
+            return restUtil.createResponse(null, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.warn("Exception occur while deleting product", e);
+            return restUtil.createResponse(null, HttpStatus.BAD_REQUEST);
+        }
     }
 }

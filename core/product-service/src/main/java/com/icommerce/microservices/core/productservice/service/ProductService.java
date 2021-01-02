@@ -33,7 +33,7 @@ public class ProductService {
     @Autowired
     private RestUtil restUtil;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
     public ProductInfoList findAll() {
         ProductInfoList productResponse = new ProductInfoList();
         productDAO.findAll()
@@ -50,7 +50,7 @@ public class ProductService {
         return DTOConverter.toProductInfo(product);
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "", method = RequestMethod.POST)
     public ProductInfo create(@RequestBody() ProductInfo productInfo) {
         Product product = DTOConverter.toProduct(productInfo, new Product());
 
