@@ -219,3 +219,8 @@ This will not allowed from outside but by internal calls.
 - As a valuable customer, I would like to  search all products in app, search by product name or description by using keyword.
 - Additionally, I can add review to each product. This will help to rate product quality.
 - All reviews rated by customer will be available in product details (see api `Find product by id`).
+
+<h2>Next chapter:
+
+- Implement Circuit breaker(Hystrix) to keep system zero down time
+- Dockerize all services.
