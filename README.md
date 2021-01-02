@@ -9,7 +9,7 @@ Besides, back office users can manage to add, update or delete product, review.
 - Java 8
 - jq https://stedolan.github.io/jq/download/
 
-<h2>Target Architecture
+<h2>Target Architecture - see image icommerce-architect.png
 
 - infrastructure
     - Discovery server: Netflix Eureka
@@ -63,149 +63,153 @@ curl -s -H "Accept: application/json" http://localhost:8761/eureka/apps | jq '.a
 - For testing, you have to ensure all services are up. 
 
 <h2> API Explaination
-<h3> Product Service
+<h3> Product Composite service. See target architecture, after receiving request from consumer, this request will forward call to core services (either product or review service)
 
-- Service class: `ProductService.java`
-- Test class: `ProductServiceApplicationTests.java`
 - Create product:
 ```bash
-curl --location --request POST 'http://localhost:8765/product/product/' \
+curl --location --request POST 'http://localhost:8765/productcomposite/product/' \
 --header 'Content-Type: application/json' \
---data-raw '{
-	"name":"iPhone 12",
+--data '{
+	"name":"iPhone12",
 	"description":"Apple product, smartphone",
 	"price":"1000",
 	"weight":"400",
     "state":"CREATED",
     "status": "ACTIVE"	
-}'
+}' | jq .
 
-curl --location --request POST 'http://localhost:8765/product/product/' \
+curl --location --request POST 'http://localhost:8765/productcomposite/product/' \
 --header 'Content-Type: application/json' \
---data-raw '{
+--data '{
 	"name":"Galaxy S10",
 	"description":"Samsung product, smartphone",
 	"price":"1000",
 	"weight":"400",
     "state":"CREATED",
     "status": "ACTIVE"	
-}'
+}' | jq .
 ```
 
-- Update product: id will be the one created earlier, in this case id = 1
+- Update product
 ```bash
-curl --location --request PUT 'http://localhost:8765/product/product/1' \
+curl --location --request PUT 'http://localhost:8765/productcomposite/product/1' \
 --header 'Content-Type: application/json' \
---data-raw '{
+--data '{
     "description": "top smartphone 2020",
     "price": "800"
-}'
+}' | jq .
 ```
 
-- Delete product: 
+- Find all products
 ```bash
-curl --location --request DELETE 'http://localhost:8765/product/product/1'
-```
-
-- Find all products:
-```bash
-curl --location --request GET 'http://localhost:8765/product/product/'
+curl --location --request GET 'http://localhost:8765/productcomposite/product/' | jq .
 ```
 
 - Find product by id:
 ```bash
-curl --location --request GET 'http://localhost:8765/product/product/1'
+curl --location --request GET 'http://localhost:8765/productcomposite/product/1' | jq .
 ```
 
 - Search product: this will find all products by keyword matching name or description
 ```bash
-curl --location --request GET 'http://localhost:8765/product/product/find?keyword=iphone12'
+curl --location --request GET 'http://localhost:8765/productcomposite/product/find?keyword=iphone12' | jq .
 ```
 
-<h3> Review Service
+- Delete product 
+```bash
+curl --location --request DELETE 'http://localhost:8765/productcomposite/product/1'
+```
 
-- Service class: `ReviewService.java`
-- Test class: `ReviewServiceApplicatonTests.java`
 - Create review
 ```bash
-curl --location --request POST 'http://localhost:8765/review/review/' \
+curl --location --request POST 'http://localhost:8765/productcomposite/review/' \
 --header 'Content-Type: application/json' \
---data-raw '{
+--data '{
     "title":"Good product",
     "description": "This product is best product ever, bla bla",
-    "productId": "1"
-}'
+    "productId": "2"
+}' | jq .
+
+curl --location --request POST 'http://localhost:8765/productcomposite/review/' \
+--header 'Content-Type: application/json' \
+--data '{
+    "title":"OK product",
+    "description": "well package, 5 stars",
+    "productId": "2"
+}'  | jq .
 ```
 
 - Update review:
 ```bash
-curl --location --request PUT 'http://localhost:8765/review/review/1' \
+curl --location --request PUT 'http://localhost:8765/productcomposite/review/1' \
 --header 'Content-Type: application/json' \
---data-raw '{
+--data '{
     "description": "Well package, look good in general",
-    "productId": "1"
+    "productId": "2"
 }'
 ```
 
 - Delete review:
 ```bash
-curl --location --request DELETE 'http://localhost:8765/review/review/1'
+curl --location --request DELETE 'http://localhost:8765/productcomposite/review/1'
 ```
 
 - Find all reviews
 ```bash
-curl --location --request GET 'http://192.168.248.136:8765/review/review/'
+curl --location --request GET 'http://localhost:8765/productcomposite/review/' | jq .
 ```
 
 Find review by ID, id=1 in this case
 ```bash
-curl --location --request GET 'http://192.168.248.136:8765/review/review/1'
+curl --location --request GET 'http://localhost:8765/productcomposite/review/2' | jq .
 ```
 
 Find reviews by product id, productId = 1 in this case
 ```bash
-curl --location --request GET 'http://192.168.248.136:8765/review/review/byProductId/1'
+curl --location --request GET 'http://localhost:8765/productcomposite/review/findByProduct/2' | jq .
 ```
 
-<h3> Composite Service
+<h3> Product Service (INTERNAL SERVICE). 
 
-- Service class: `ProductCompositeService.java`
+This will not allowed from outside but by internal calls.
 
-- Find all products
-```bash
-curl --location --request GET 'http://localhost:8765/productcomposite/product'
-```
+- Service class: `ProductService.java`
+- Test class: `ProductServiceApplicationTests.java`
+- API:
+    - Create product
+    - Update product
+    - Delete product
+    - Find all product
+    - Find product by id
+    - Search product
+    
+<h3> Review Service (INTERNAL SERVICE). 
 
-- Find product by id
-```bash
-curl --location --request GET 'http://localhost:8765/productcomposite/product/1'
-```
+This will not allowed from outside but by internal calls.
 
-- Search product: this will find all products by keyword matching name or description
-```bash
-curl --location --request GET 'http://localhost:8765/productcomposite/product?keyword=iPhone12'
-```
-- Add review by customer
-```bash
-curl --location --request POST 'http://localhost:8765/productcomposite/product/review/createByCustomer' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "title" : "Product OK",
-    "description": "Best experiences ever whohooo",
-    "productId": "1"
-}'
-```
+- Service class: `ReviewService.java`
+- Test class: `ReviewServiceApplicationTests.java`
+- API:
+    - Create review
+    - Update review
+    - Delete review
+    - Find all review
+    - Find review by id
+    - Find reviews by product id
+
+<h2> Service flow:
+
+- External requests: there's no direct communication between public consumers and core services. These requests need to go throw compposite service. Config for this is defined in project `edge-server` class `application.yml`.
+- Internal requests: all services in composite and core layer are allowed to make connections.  
 
 <h2>Use cases
 <h3> Admin/Backoffice User
 
 - Admin user allows to to manage product via product api. She could modify description as well as price instantly to keep product info up to date.
-- She could also able to manage review added by customer. Any spam message can be deleted by using review service. This is amazing api to get rid of from product spam.
-- Product and review service are considered as internal service. They are consumed by backoffice user only.
+- She could also able to manage review added by customer. Any spam message can be deleted by using review service. This is amazing api to get rid of from product's spam.
 
 <h3> Customer/Shopper
 
-- As a valuable customer, I search all products in shop, search by product name of description by using `composite service`.
+- As a valuable customer, I would like to  search all products in app, search by product name or description by using keyword.
 - Additionally, I can add review to each product. This will help to rate product quality.
 - All reviews rated by customer will be available in product details (see api `Find product by id`).
-- Composite service is a public service where customer can search, view details or add reviews. 
