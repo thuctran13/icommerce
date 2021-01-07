@@ -5,12 +5,14 @@ import com.icommerce.microservices.composite.productcompositeservice.dto.Product
 import com.icommerce.microservices.composite.productcompositeservice.dto.ReviewInfo;
 import com.icommerce.microservices.composite.productcompositeservice.dto.ReviewInfoList;
 import com.icommerce.microservices.composite.productcompositeservice.util.RestUtil;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -27,6 +29,7 @@ public class ProductCompositeIntegration {
 
     private RestTemplate restTemplate = new RestTemplate();
 
+    @HystrixCommand(fallbackMethod = "defaultProduct")
     public ResponseEntity<ProductInfoList> findAllProducts() {
 
         URI uri = restUtil.getServiceUrl("product", "http://localhost:8081/product");
@@ -40,6 +43,7 @@ public class ProductCompositeIntegration {
         return responseEntity;
     }
 
+    @HystrixCommand(fallbackMethod = "defaultProduct")
     public ResponseEntity<ProductInfo> findProduct(Long productId) {
 
         URI uri = restUtil.getServiceUrl("product", "http://localhost:8081/product");
@@ -53,6 +57,7 @@ public class ProductCompositeIntegration {
         return responseEntity;
     }
 
+    @HystrixCommand(fallbackMethod = "defaultProduct")
     public ResponseEntity<ProductInfo> createProduct(ProductInfo productInfo) {
 
         URI uri = restUtil.getServiceUrl("product", "http://localhost:8081/product");
@@ -66,6 +71,7 @@ public class ProductCompositeIntegration {
         return responseEntity;
     }
 
+    @HystrixCommand(fallbackMethod = "defaultProduct")
     public ResponseEntity<ProductInfo> updateProduct(Long productId, ProductInfo productInfo) {
 
         URI uri = restUtil.getServiceUrl("product", "http://localhost:8081/product");
@@ -78,7 +84,8 @@ public class ProductCompositeIntegration {
 
         return responseEntity;
     }
- 
+
+    @HystrixCommand(fallbackMethod = "defaultProduct")
     public void deleteProduct(Long productId) {
 
         URI uri = restUtil.getServiceUrl("product", "http://localhost:8081/product");
@@ -88,6 +95,7 @@ public class ProductCompositeIntegration {
         restTemplate.delete(url);
     }
 
+    @HystrixCommand(fallbackMethod = "defaultProduct")
     public ResponseEntity<ProductInfoList> searchProduct(String keyword) {
 
         URI uri = restUtil.getServiceUrl("product", "http://localhost:8081/product");
@@ -101,6 +109,7 @@ public class ProductCompositeIntegration {
         return responseEntity;
     }
 
+    @HystrixCommand(fallbackMethod = "defaultReview")
     public ResponseEntity<ReviewInfoList> findAllReviewsByProduct(Long productId) {
         URI uri = restUtil.getServiceUrl("review", "http://localhost:8081/review");
         String url = uri.toString() + "/review/byProductId/" + productId;
@@ -113,6 +122,7 @@ public class ProductCompositeIntegration {
         return responseEntity;
     }
 
+    @HystrixCommand(fallbackMethod = "defaultReview")
     public ResponseEntity<ReviewInfoList> findAllReviews() {
         URI uri = restUtil.getServiceUrl("review", "http://localhost:8081/review");
         String url = uri.toString() + "/review/";
@@ -125,6 +135,7 @@ public class ProductCompositeIntegration {
         return responseEntity;
     }
 
+    @HystrixCommand(fallbackMethod = "defaultReview")
     public ResponseEntity<ReviewInfo> findReviewById(Long reviewId) {
         URI uri = restUtil.getServiceUrl("review", "http://localhost:8081/review");
         String url = uri.toString() + "/review/" + reviewId;
@@ -137,6 +148,7 @@ public class ProductCompositeIntegration {
         return responseEntity;
     }
 
+    @HystrixCommand(fallbackMethod = "defaultReview")
     public ResponseEntity<ReviewInfo> createReview(ReviewInfo reviewInfo) {
         URI uri = restUtil.getServiceUrl("review", "http://localhost:8081/review");
         String url = uri.toString() + "/review/";
@@ -149,6 +161,7 @@ public class ProductCompositeIntegration {
         return createReviewRes;
     }
 
+    @HystrixCommand(fallbackMethod = "defaultReview")
     public ResponseEntity<ReviewInfo> updateReview(Long reviewId, ReviewInfo reviewInfo) {
         URI uri = restUtil.getServiceUrl("review", "http://localhost:8081/review");
         String url = uri.toString() + "/review/" + reviewId;
@@ -161,11 +174,23 @@ public class ProductCompositeIntegration {
         return responseEntity;
     }
 
-    public void deteleReview(Long reviewId) {
+    @HystrixCommand(fallbackMethod = "defaultReview")
+    public void deleteReview(Long reviewId) {
         URI uri = restUtil.getServiceUrl("review", "http://localhost:8081/review");
         String url = uri.toString() + "/review/" + reviewId;
         LOG.debug("CreateReviewByCustomer from URL: {}", url);
         
         restTemplate.delete(url);
     }
+
+    public ResponseEntity<ProductInfoList> defaultProduct() {
+        LOG.warn("Using fallback method for product-service");
+        return restUtil.createResponse(null, HttpStatus.BAD_GATEWAY);
+    }
+
+    public ResponseEntity<ProductInfo> defaultReview() {
+        LOG.warn("Using fallback method for review-service");
+        return restUtil.createResponse(null, HttpStatus.BAD_GATEWAY);
+    }
+    
 }

@@ -35,3 +35,7 @@ eureka:
   instance:
     #Virtual host name by which the clients identifies this service
     virtualHostName: ${spring.application.name}
+
+hystrix:
+  dashboard:
+    proxy-stream-allow-list: "*"

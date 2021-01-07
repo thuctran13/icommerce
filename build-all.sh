@@ -5,4 +5,5 @@ cd core/review-service;                 ./gradlew build; cd -
 cd composite/product-composite-service; ./gradlew build; cd -
 cd support/discovery-server;            ./gradlew build; cd -
 cd support/edge-server;                 ./gradlew build; cd -
-
+cd support/monitor-dashboard;           ./gradlew build; cd -
+cd support/turbine;                     ./gradlew build; cd -

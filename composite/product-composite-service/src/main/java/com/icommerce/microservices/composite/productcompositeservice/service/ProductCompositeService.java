@@ -197,7 +197,7 @@ public class ProductCompositeService {
     @RequestMapping(value = "/review/{reviewId}", method = RequestMethod.DELETE)
     public ResponseEntity<ReviewInfo> deleteReview(@PathVariable Long reviewId) {
         try {
-            productIntegration.deteleReview(reviewId);
+            productIntegration.deleteReview(reviewId);
             return restUtil.createResponse(null, HttpStatus.OK);
         } catch (Exception e) {
             LOG.warn("Exception occur while deleting product", e);
